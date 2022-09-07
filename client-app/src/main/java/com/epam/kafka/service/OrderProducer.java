@@ -1,0 +1,34 @@
+package com.epam.kafka.service;
+
+import com.epam.kafka.domain.Order;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.stereotype.Service;
+
+import java.util.Properties;
+
+@Service
+public class OrderProducer {
+
+    private static final String BOOTSTRAP_SERVERS_URL = "127.0.0.1:9092";
+    public static final String ORDER_TOPIC = "order";
+
+    public void produce(Order order) {
+        Properties properties = initProperties();
+        KafkaProducer<String, Order> producer = new KafkaProducer<>(properties);
+        ProducerRecord<String, Order> record = new ProducerRecord<>(ORDER_TOPIC, order);
+
+        producer.send(record);
+        producer.close();
+    }
+
+    private static Properties initProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_URL);
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        return properties;
+    }
+}
