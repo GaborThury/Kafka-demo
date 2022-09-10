@@ -14,6 +14,8 @@ public class Order {
 
     public Order(Integer id, String customerName, String pizzaName, OrderStatus orderStatus) {
         this.id = id;
+        this.customerName = customerName;
+        this.pizzaName = pizzaName;
         this.orderStatus = orderStatus;
     }
 

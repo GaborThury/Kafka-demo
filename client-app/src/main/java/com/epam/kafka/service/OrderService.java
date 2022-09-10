@@ -7,6 +7,8 @@ import com.epam.kafka.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class OrderService {
 
@@ -24,6 +26,10 @@ public class OrderService {
         Order order = mapToOrder(orderDto);
         orderRepository.save(order);
         orderProducer.produce(order);
+    }
+
+    public Optional<Order> findById(Integer id) {
+        return orderRepository.findById(id);
     }
 
     private Order mapToOrder(OrderDto orderDto) {
