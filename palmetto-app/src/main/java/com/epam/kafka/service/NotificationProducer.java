@@ -1,5 +1,7 @@
 package com.epam.kafka.service;
 
+import com.epam.kafka.domain.Order;
+import com.epam.kafka.serializer.OrderSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -17,11 +19,11 @@ public class NotificationProducer {
     private static final Logger LOGGER = java.util.logging.Logger.getLogger(NotificationProducer.class.getName());
 
 
-    public void send(String message) {
+    public void send(Order order) {
         Properties properties = initProperties();
-        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+        KafkaProducer<String, Order> producer = new KafkaProducer<>(properties);
 
-        ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME, message);
+        ProducerRecord<String, Order> record = new ProducerRecord<>(TOPIC_NAME, order);
 
         producer.send(record, ((recordMetadata, e) -> {
             if (e == null) {
@@ -42,7 +44,7 @@ public class NotificationProducer {
         Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_URL);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, OrderSerializer.class.getName());
         return properties;
     }
 

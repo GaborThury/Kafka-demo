@@ -1,6 +1,7 @@
 package com.epam.kafka.domain;
 
 public class Order {
+    private Integer id;
     private String customerName;
     private String pizzaName;
     private OrderStatus orderStatus;
@@ -8,7 +9,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(String customerName, String pizzaName, OrderStatus orderStatus) {
+    public Order(Integer id, String customerName, String pizzaName, OrderStatus orderStatus) {
+        this.id = id;
         this.customerName = customerName;
         this.pizzaName = pizzaName;
         this.orderStatus = orderStatus;
@@ -36,6 +38,14 @@ public class Order {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }
