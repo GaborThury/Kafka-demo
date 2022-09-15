@@ -50,4 +50,14 @@ public class Order {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", customerName='" + customerName + '\'' +
+                ", pizzaName='" + pizzaName + '\'' +
+                ", orderStatus=" + orderStatus +
+                '}';
+    }
 }

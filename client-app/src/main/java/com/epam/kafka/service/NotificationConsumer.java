@@ -14,38 +14,36 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 @Service
-public class OrderConsumer {
+public class NotificationConsumer {
 
-    private final BakerService bakerService;
     private static final String BOOTSTRAP_SERVERS_URL = "127.0.0.1:9092";
-    public static final String ORDER_TOPIC = "order";
+    public static final String NOTIFICATION_TOPIC = "notification";
     public static final String GROUP_ID = "order_group";
-
     public static final String EARLIEST = "earliest";
+    private static final Logger LOGGER = Logger.getLogger(NotificationConsumer.class.getName());
 
-    public OrderConsumer(BakerService bakerService) {
-        this.bakerService = bakerService;
-    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void consume() {
         Properties properties = initProperties();
         KafkaConsumer<String, Order> consumer = new KafkaConsumer<>(properties);
-        consumer.subscribe(Collections.singleton(ORDER_TOPIC));
+        consumer.subscribe(Collections.singleton(NOTIFICATION_TOPIC));
 
-        // poll the new data
         while (true) {
             ConsumerRecords<String, Order> records = consumer.poll(Duration.ofMillis(10000));
 
             records.forEach(record -> {
                 Order order = record.value();
-                if (OrderStatus.WAITING_FOR_BAKING.equals(order.getOrderStatus())) {
-                    bakerService.bake(order);
+                if (OrderStatus.IN_DELIVERY.equals(order.getOrderStatus())) {
+                    LOGGER.info("Customer got his/her order " + order);
+                    LOGGER.info("Changing status to completed.");
+                    order.setOrderStatus(OrderStatus.COMPLETED);
                 }
+                LOGGER.info("OrderStatus changed! " + order);
             });
-
         }
     }
     private Properties initProperties() {

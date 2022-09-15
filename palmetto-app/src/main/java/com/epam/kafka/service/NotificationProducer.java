@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class NotificationProducer {
 
     private static final String BOOTSTRAP_SERVERS_URL = "127.0.0.1:9092";
-    private static final String TOPIC_NAME = "notification";
+    private static final String NOTIFICATION_TOPIC = "notification";
     private static final Logger LOGGER = java.util.logging.Logger.getLogger(NotificationProducer.class.getName());
 
 
@@ -23,20 +23,10 @@ public class NotificationProducer {
         Properties properties = initProperties();
         KafkaProducer<String, Order> producer = new KafkaProducer<>(properties);
 
-        ProducerRecord<String, Order> record = new ProducerRecord<>(TOPIC_NAME, order);
+        ProducerRecord<String, Order> record = new ProducerRecord<>(NOTIFICATION_TOPIC, order);
 
-        producer.send(record, ((recordMetadata, e) -> {
-            if (e == null) {
-                LOGGER.info("Received new metadata, \n" +
-                        "Topic: " + recordMetadata.topic() + "\n" +
-                        "Partition " + recordMetadata.partition() + "\n" +
-                        "Offset: " + recordMetadata.offset() + "\n" +
-                        "Timestamp: " + recordMetadata.timestamp());
-            } else {
-                LOGGER.severe("Error while producing");
-            }
-        }));
-
+        LOGGER.info("sending order to the notification topic " + order);
+        producer.send(record);
         producer.close();
     }
 
